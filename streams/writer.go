@@ -2,7 +2,7 @@ package streams
 
 import (
 	"bufio"
-	"encoding/json"
+	go_simple_files "github.com/ShindouMihou/go-simple-files/go-simple-files"
 	"os"
 )
 
@@ -36,7 +36,7 @@ func (writer *Writer) Write(t any) error {
 	case []byte:
 		return writer.write(t.([]byte))
 	default:
-		bytes, err := json.Marshal(t)
+		bytes, err := go_simple_files.Marshal(t)
 		if err != nil {
 			return err
 		}

@@ -91,3 +91,12 @@ go-simple-files also has simplified streaming that helps with streamwriting.
   - [x] `End`: flushes the buffer and closes the file. similar to bun's `FileSink.end`.
   - [x] `Close`: closes the file, but does not flush the buffer, this is risky.
   - [x] `Reset`: whatever the heck `bufio.Writer.Reset` does.
+
+## i hate stdlib json!
+
+then don't use stdlib json! go-simple-files allows you to change the marshaller to any stdlib-json compatible
+marshallers such as [`sonic`](https://github.com/bytedance/sonic). you can change it by changing the values in `go_simple_files` package:
+```go
+go_simple_files.Marshal = sonic.Marshal
+go_simple_files.Unmarshal = sonic.Unmarshal
+```

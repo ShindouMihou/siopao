@@ -3,7 +3,7 @@ package streams
 import (
 	"bufio"
 	"bytes"
-	"encoding/json"
+	go_simple_files "github.com/ShindouMihou/go-simple-files/go-simple-files"
 )
 
 type TypedReader[T any] struct {
@@ -48,7 +48,7 @@ func (reader *TypedReader[T]) EachLine(fn TypedLineReader[T]) error {
 		}
 
 		var t T
-		if err := json.Unmarshal(line[:end], &t); err != nil {
+		if err := go_simple_files.Unmarshal(line[:end], &t); err != nil {
 			return err
 		}
 

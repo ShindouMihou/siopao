@@ -1,8 +1,8 @@
 package files
 
 import (
-	"encoding/json"
 	"errors"
+	go_simple_files "github.com/ShindouMihou/go-simple-files/go-simple-files"
 	"github.com/ShindouMihou/go-simple-files/streams"
 	"io"
 	"os"
@@ -74,7 +74,7 @@ func (file *File) Json(t interface{}) error {
 		if err != nil {
 			return nil, err
 		}
-		if err := json.Unmarshal(bytes, t); err != nil {
+		if err := go_simple_files.Unmarshal(bytes, t); err != nil {
 			return nil, err
 		}
 		return nil, nil
@@ -113,7 +113,7 @@ func (file *File) wrt(trunc bool, bytes []byte) error {
 }
 
 func (file *File) wrtjson(trunc bool, t interface{}) error {
-	bytes, err := json.Marshal(t)
+	bytes, err := go_simple_files.Marshal(t)
 	if err != nil {
 		return err
 	}
