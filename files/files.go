@@ -84,6 +84,22 @@ func (file *File) Json(t interface{}) error {
 	return nil
 }
 
+func (file *File) WriterSize(overwrite bool, size int) (*streams.Writer, error) {
+	err := file.openWrite(overwrite)
+	if err != nil {
+		return nil, err
+	}
+	return streams.NewWriterSize(file.file, size), nil
+}
+
+func (file *File) Writer(overwrite bool) (*streams.Writer, error) {
+	err := file.openWrite(overwrite)
+	if err != nil {
+		return nil, err
+	}
+	return streams.NewWriter(file.file), nil
+}
+
 func (file *File) wrt(trunc bool, bytes []byte) error {
 	if _, err := write(file, trunc, func() (*any, error) {
 		if _, err := file.file.Write(bytes); err != nil {

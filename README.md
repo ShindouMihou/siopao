@@ -5,7 +5,7 @@
 file operations. As its roots, go-simple-files was inspired [`bun.sh`](https://bun.sh)'s incredible developer-experience 
 for file operations.
 
-## Demo
+## demo
 ```go
 package main
 
@@ -33,7 +33,7 @@ func main() {
 
 ```
 
-## Supported Operations
+## file io
 go-simple-files supports the following file methods:
 - [x] `File.Write(any)`: writes to file, appends if it exists. anything other than string and byte array is translated to json.
 - [x] `File.Overwrite(any)`: overwrites the file with the new contents, similar to the above and translates anything else to json.
@@ -41,7 +41,11 @@ go-simple-files supports the following file methods:
 - [x] `File.Bytes()`: reads the file contents and into a byte array.
 - [x] `File.Reader()`: returns a `Reader` of the file.
 - [x] `File.TextReader()`: returns a `TextReader` of the file.
-- [ ] `File.Writer()`: returns a `Writer` of the file, creates the file if needed.
+- [x] `File.Writer(overwrite)`: returns a `Writer` of the file, creates the file if needed.
+- [x] `File.WriterSize(overwrite, buffer_size)`: returns a `Writer` with a specified buffer size of the file, creates the file if needed.
+
+
+## read streams
 
 go-simple-files also has simplified streaming that helps with stream reading.
 
@@ -61,9 +65,27 @@ go-simple-files also has simplified streaming that helps with stream reading.
   - [x] `Count()`: counts all the lines in the file, this calls `Lines()` and counts the cache if there is one already.
   - [x] `EachLine(func (line []byte))`: reads each line and performs an action upon that line, **the line's byte array will be overridden on each next line**
   - [x] `EachImmutableLine(func (line []byte))`: reads each line and performs an action upon that line, slower than the prior method, but the line's value is never overridden on each next line.
+  - [x] `Empty()`: dereferences the cache if there is any.
 
 - `TextReader`: a simple streaming reader that handles with text. it wraps around `reader`.
   - [x] `Lines()`: reads each line and creates an array of string. this also caches the array into the reader, you can empty it using `TextReader.empty()`
   - [x] `Count()`: counts all the lines in the file, this calls `Lines()` and counts the cache if there is one already.
   - [x] `EachLine(func (line string))`: reads each line and performs an action upon that line.
-  - [x] `Empty`: dereferences the cache if there is any.
+  - [x] `Empty()`: dereferences the cache if there is any.
+
+## write streams
+
+go-simple-files also has simplified streaming that helps with stream writing.
+
+> **Warning!**
+> 
+> It is your responsibility to close the buffer when it comes to writing, when possible, use 
+> `Writer.Close()` to flush the buffer and close the file to prevent anything crazy happening.
+
+- `Writer`: the all-around streaming writer, defaults to json for anything other than bytes and string.
+  - [x] `AlwaysAppendNewLine()`: sets the writer to always append a new line on each new write.
+  - [x] `Write(any)`: similar to the `File.write` but pushes to the buffer, this translates anything other than bytes and string to json.
+  - [x] `Flush()`: flushes the buffer.
+  - [x] `End()`: flushes the buffer and closes the file. similar to bun's `FileSink.end()`.
+  - [x] `Close()`: closes the file, but does not flush the buffer, this is risky.
+  - [x] `Reset()`: whatever the heck `bufio.Writer.Reset` does.

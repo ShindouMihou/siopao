@@ -16,6 +16,10 @@ func (file *File) openRead() error {
 }
 
 func (file *File) openWrite(trunc bool) error {
+	if err := file.mkparent(); err != nil {
+		return err
+	}
+
 	var f *os.File
 	var err error
 
