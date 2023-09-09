@@ -49,7 +49,7 @@ go-simple-files supports the following file methods:
 
 go-simple-files also has simplified streaming that helps with stream reading.
 
-> **Warning!**
+> **Warning**
 > 
 > All methods in the readers will close the File, which means that these are not reusable. Although, you can create 
 > the reader again through the same way using the `File` interface as the `Reader` creation methods will open the file 
@@ -77,7 +77,7 @@ go-simple-files also has simplified streaming that helps with stream reading.
 
 go-simple-files also has simplified streaming that helps with stream writing.
 
-> **Warning!**
+> **Warning**
 > 
 > It is your responsibility to close the buffer when it comes to writing, when possible, use 
 > `Writer.Close()` to flush the buffer and close the file to prevent anything crazy happening.
