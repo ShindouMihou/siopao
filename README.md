@@ -1,8 +1,8 @@
-# go-simple-files
+# siopao
 
-*Simplified file operations for Golang.* Go-Simple-Files is a library built from the experimental joke project 
+*Simplified file operations for Golang.* siopao is a library built from the experimental joke project 
 [`go-bun`](https://github.com/ShindouMihou/go-bun) in order to bring some simpler abstractions over common, simple 
-file operations. As its roots, go-simple-files was inspired [`bun.sh`](https://bun.sh)'s incredible developer-experience 
+file operations. As its roots, siopao was inspired [`bun.sh`](https://bun.sh)'s incredible developer-experience 
 for file operations.
 
 ## demo
@@ -11,7 +11,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/ShindouMihou/go-simple-files/files"
+	"github.com/ShindouMihou/siopao/siopao"
 	"log"
 )
 
@@ -20,7 +20,7 @@ type Hello struct {
 }
 
 func main() {
-	file := files.Of("test.json")
+	file := siopao.Open("test.json")
 	if err := file.Overwrite(Hello{World: "hello world"}); err != nil {
 		log.Fatalln(err)
 	}
@@ -34,10 +34,14 @@ func main() {
 ```
 
 ## file io
-go-simple-files supports the following file methods:
+siopao supports the following file methods:
 - [x] `File.Write(any)`: writes to file, appends if it exists. anything other than string and byte array is translated to json.
-- [x] `File.Overwrite(any)`: overwrites the file with the new contents, similar to the above and translates anything else to json.
+- [x] `File.Overwrite(any)`: overwrites the file with the new contents, similar to the above and marshals anything else to json.
+- [x] `File.WriteMarshal(marshaler, any)`: writes  to file, appends if it exists. anything other than string and byte array is marshaled using the provided marshaller.
+- [x] `File.OverwriteMarshal(marshaler, any)`: overwrites the file with the new contents, similar to the above and marshals anything else to the provided marshaller.
 - [x] `File.Text`: reads the file contents and into a string.
+- [x] `File.Json(any)`: reads the file contents as a json and unmarshals into the type.
+- [x] `File.Unmarshal(unmarshaler, any)`: reads the file contents and unmarshals into the type.
 - [x] `File.Bytes`: reads the file contents and into a byte array.
 - [x] `File.Reader`: returns a [`Reader`](#reader) of the file.
 - [x] `File.TextReader`: returns a [`TextReader`](#textreader) of the file.
@@ -47,7 +51,7 @@ go-simple-files supports the following file methods:
 
 ## read streams
 
-go-simple-files also has simplified streaming that helps with stream reading.
+siopao also has simplified streaming that helps with stream reading.
 
 > **Warning**
 > 
@@ -57,8 +61,9 @@ go-simple-files also has simplified streaming that helps with stream reading.
 
 ### typedreader
 a streaming reader that is intended to be used for json arrays with each line being a one-line json object.
-can be created using `streams.NewTypedReader[T any](reader)`.
+can be created using `streaming.NewTypedReader[T any](reader)`.
 - [x] `Lines`: reads each line and transform it into the type before adding them to an array.
+- [x] `WithUnmarshaler`: sets the unmarshaler of reader, defaults to json.
 
 ### reader
 the base streaming reader that handles with bytes.
@@ -77,7 +82,7 @@ a simple streaming reader that handles with strings. it wraps around [`reader`](
 
 ## write streams
 
-go-simple-files also has simplified streaming that helps with streamwriting.
+siopao also has simplified streaming that helps with streamwriting.
 
 > **Warning**
 > 
@@ -86,7 +91,8 @@ go-simple-files also has simplified streaming that helps with streamwriting.
 
 - `Writer`: the all-around streaming writer, defaults to json for anything other than bytes and string.
   - [x] `AlwaysAppendNewLine`: sets the writer to always append a new line on each new write.
-  - [x] `Write(any)`: similar to the [`File.write`](#file-io) but pushes to the buffer, this translates anything other than bytes and string to json.
+  - [x] `Write(any)`: similar to the [`File.Write`](#file-io) but pushes to the buffer, this marshals anything other than bytes and string to json.
+  - [x] `WriteMarshal(any)`: similar to the [`File.WriteMarshal`](#file-io) but pushes to the buffer, this marshals anything other than bytes and string with the provided marshaller.
   - [x] `Flush`: flushes the buffer.
   - [x] `End`: flushes the buffer and closes the file. similar to bun's `FileSink.end`.
   - [x] `Close`: closes the file, but does not flush the buffer, this is risky.
@@ -94,9 +100,9 @@ go-simple-files also has simplified streaming that helps with streamwriting.
 
 ## i hate stdlib json!
 
-then don't use stdlib json! go-simple-files allows you to change the marshaller to any stdlib-json compatible
-marshallers such as [`sonic`](https://github.com/bytedance/sonic). you can change it by changing the values in `go_simple_files` package:
+then don't use stdlib json! siopao allows you to change the marshaller to any stdlib-json compatible
+marshallers such as [`sonic`](https://github.com/bytedance/sonic). you can change it by changing the values in `paopao` package:
 ```go
-go_simple_files.Marshal = sonic.Marshal
-go_simple_files.Unmarshal = sonic.Unmarshal
+paopao.Marshal = sonic.Marshal
+paopao.Unmarshal = sonic.Unmarshal
 ```

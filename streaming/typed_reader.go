@@ -1,19 +1,25 @@
-package streams
+package streaming
 
 import (
 	"bufio"
 	"bytes"
-	go_simple_files "github.com/ShindouMihou/go-simple-files/go-simple-files"
+	"github.com/ShindouMihou/siopao/paopao"
 )
 
 type TypedReader[T any] struct {
-	reader *Reader
+	reader    *Reader
+	unmarshal paopao.Unmarshaler
 }
 
 func NewTypedReader[T any](reader *Reader) *TypedReader[T] {
 	return &TypedReader[T]{
-		reader: reader,
+		reader:    reader,
+		unmarshal: paopao.Unmarshal,
 	}
+}
+
+func (reader *TypedReader[T]) WithUnmarshaler(unmarshaler paopao.Unmarshaler) {
+	reader.unmarshal = unmarshaler
 }
 
 type TypedLineReader[T any] func(t *T)
@@ -48,7 +54,7 @@ func (reader *TypedReader[T]) EachLine(fn TypedLineReader[T]) error {
 		}
 
 		var t T
-		if err := go_simple_files.Unmarshal(line[:end], &t); err != nil {
+		if err := reader.unmarshal(line[:end], &t); err != nil {
 			return err
 		}
 

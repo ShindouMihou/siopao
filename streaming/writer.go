@@ -1,8 +1,8 @@
-package streams
+package streaming
 
 import (
 	"bufio"
-	go_simple_files "github.com/ShindouMihou/go-simple-files/go-simple-files"
+	"github.com/ShindouMihou/siopao/paopao"
 	"os"
 )
 
@@ -36,12 +36,20 @@ func (writer *Writer) Write(t any) error {
 	case []byte:
 		return writer.write(t.([]byte))
 	default:
-		bytes, err := go_simple_files.Marshal(t)
+		bytes, err := paopao.Marshal(t)
 		if err != nil {
 			return err
 		}
 		return writer.write(bytes)
 	}
+}
+
+func (writer *Writer) WriteMarshal(marshaller paopao.Marshaller, t any) error {
+	bytes, err := marshaller(t)
+	if err != nil {
+		return err
+	}
+	return writer.write(bytes)
 }
 
 func (writer *Writer) Flush() error {

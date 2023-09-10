@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/ShindouMihou/go-simple-files/files"
-	"github.com/ShindouMihou/go-simple-files/streams"
+	"github.com/ShindouMihou/siopao/siopao"
+	"github.com/ShindouMihou/siopao/streaming"
 	"log"
 )
 
@@ -12,12 +12,12 @@ type Hello struct {
 }
 
 func main() {
-	file := files.Of("examples/typed_reader/big_test.json")
+	file := siopao.Open("examples/typed_reader/big_test.json")
 	reader, err := file.Reader()
 	if err != nil {
 		log.Fatalln(err)
 	}
-	hellos, err := streams.NewTypedReader[Hello](reader).Lines()
+	hellos, err := streaming.NewTypedReader[Hello](reader).Lines()
 	if err != nil {
 		log.Fatalln(err)
 	}

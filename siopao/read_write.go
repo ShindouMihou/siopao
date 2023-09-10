@@ -1,4 +1,4 @@
-package files
+package siopao
 
 func read[T any](file *File, fn func() (*T, error)) (*T, error) {
 	err := file.openRead()

@@ -1,9 +1,9 @@
-package files
+package siopao
 
 import (
 	"errors"
-	go_simple_files "github.com/ShindouMihou/go-simple-files/go-simple-files"
-	"github.com/ShindouMihou/go-simple-files/streams"
+	"github.com/ShindouMihou/siopao/paopao"
+	"github.com/ShindouMihou/siopao/streaming"
 	"io"
 	"os"
 	"reflect"
@@ -14,7 +14,7 @@ type File struct {
 	file *os.File
 }
 
-func Of(path string) *File {
+func Open(path string) *File {
 	return &File{
 		path: path,
 		file: nil,
@@ -48,15 +48,15 @@ func (file *File) Bytes() ([]byte, error) {
 	return *bytes, nil
 }
 
-func (file *File) Reader() (*streams.Reader, error) {
+func (file *File) Reader() (*streaming.Reader, error) {
 	err := file.openRead()
 	if err != nil {
 		return nil, err
 	}
-	return streams.NewReader(file.file), nil
+	return streaming.NewReader(file.file), nil
 }
 
-func (file *File) TextReader() (*streams.TextReader, error) {
+func (file *File) TextReader() (*streaming.TextReader, error) {
 	reader, err := file.Reader()
 	if err != nil {
 		return nil, err
@@ -64,7 +64,7 @@ func (file *File) TextReader() (*streams.TextReader, error) {
 	return reader.AsTextReader(), nil
 }
 
-func (file *File) Json(t interface{}) error {
+func (file *File) Unmarshal(unmarshal paopao.Unmarshaler, t interface{}) error {
 	if reflect.TypeOf(t).Kind() != reflect.Pointer {
 		return errors.New("non-pointer kind for value")
 	}
@@ -74,7 +74,7 @@ func (file *File) Json(t interface{}) error {
 		if err != nil {
 			return nil, err
 		}
-		if err := go_simple_files.Unmarshal(bytes, t); err != nil {
+		if err := unmarshal(bytes, t); err != nil {
 			return nil, err
 		}
 		return nil, nil
@@ -84,51 +84,24 @@ func (file *File) Json(t interface{}) error {
 	return nil
 }
 
-func (file *File) WriterSize(overwrite bool, size int) (*streams.Writer, error) {
+func (file *File) Json(t interface{}) error {
+	return file.Unmarshal(paopao.Unmarshal, t)
+}
+
+func (file *File) WriterSize(overwrite bool, size int) (*streaming.Writer, error) {
 	err := file.openWrite(overwrite)
 	if err != nil {
 		return nil, err
 	}
-	return streams.NewWriterSize(file.file, size), nil
+	return streaming.NewWriterSize(file.file, size), nil
 }
 
-func (file *File) Writer(overwrite bool) (*streams.Writer, error) {
+func (file *File) Writer(overwrite bool) (*streaming.Writer, error) {
 	err := file.openWrite(overwrite)
 	if err != nil {
 		return nil, err
 	}
-	return streams.NewWriter(file.file), nil
-}
-
-func (file *File) wrt(trunc bool, bytes []byte) error {
-	if _, err := write(file, trunc, func() (*any, error) {
-		if _, err := file.file.Write(bytes); err != nil {
-			return nil, err
-		}
-		return nil, nil
-	}); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (file *File) wrtjson(trunc bool, t interface{}) error {
-	bytes, err := go_simple_files.Marshal(t)
-	if err != nil {
-		return err
-	}
-	return file.wrt(trunc, bytes)
-}
-
-func (file *File) wrtany(trunc bool, t any) error {
-	switch t.(type) {
-	case string:
-		return file.wrt(trunc, []byte(t.(string)))
-	case []byte:
-		return file.wrt(trunc, t.([]byte))
-	default:
-		return file.wrtjson(true, t)
-	}
+	return streaming.NewWriter(file.file), nil
 }
 
 func (file *File) Write(t any) error {
@@ -137,4 +110,12 @@ func (file *File) Write(t any) error {
 
 func (file *File) Overwrite(t any) error {
 	return file.wrtany(true, t)
+}
+
+func (file *File) WriteMarshal(marshal paopao.Marshaller, t any) error {
+	return file.wrtmarshal(marshal, false, t)
+}
+
+func (file *File) OverwriteMarshal(marshal paopao.Marshaller, t any) error {
+	return file.wrtmarshal(marshal, true, t)
 }

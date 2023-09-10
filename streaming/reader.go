@@ -1,4 +1,4 @@
-package streams
+package streaming
 
 import (
 	"bufio"

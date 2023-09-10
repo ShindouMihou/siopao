@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/ShindouMihou/go-simple-files/files"
+	"github.com/ShindouMihou/siopao/siopao"
 	"log"
 )
 
@@ -11,7 +11,7 @@ type Hello struct {
 }
 
 func main() {
-	file := files.Of("examples/readers/big_test.txt")
+	file := siopao.Open("examples/readers/big_test.txt")
 	reader, err := file.TextReader()
 	if err != nil {
 		log.Fatalln(err)

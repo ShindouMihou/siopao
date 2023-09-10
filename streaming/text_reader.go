@@ -1,4 +1,4 @@
-package streams
+package streaming
 
 type TextReader struct {
 	reader *Reader

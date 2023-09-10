@@ -1,3 +1,3 @@
-module github.com/ShindouMihou/go-simple-files
+module github.com/ShindouMihou/siopao
 
 go 1.20
