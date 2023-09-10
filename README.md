@@ -39,6 +39,13 @@ func main() {
 
 ```
 
+## installation
+```go
+go get github.com/ShindouMihou/siopao
+```
+
+view documentation over at your local ide or through [`pkg.go.dev`](https://pkg.go.dev/github.com/ShindouMihou/siopao).
+
 ## file io
 siopao supports the following file methods:
 - [x] `File.Write(any)`: writes to file, appends if it exists. anything other than string, `io.Reader`, `bufio.Reader` and byte array is translated to json.
