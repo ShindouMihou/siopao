@@ -34,6 +34,19 @@ func TestFile_Text(t *testing.T) {
 	}
 }
 
+func TestFile_Checksum(t *testing.T) {
+	file := Open(".tests/write-01.txt")
+
+	kinds := []ChecksumKind{Sha512Checksum, Sha256Checksum, Md5Checksum}
+	for _, kind := range kinds {
+		checksum, err := file.Checksum(kind)
+		if err != nil {
+			t.Fatal("failed to read to test text file: ", err)
+		}
+		t.Log(kind, ":", checksum)
+	}
+}
+
 type Hello struct {
 	World string `json:"world"`
 }

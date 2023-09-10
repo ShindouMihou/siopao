@@ -54,7 +54,8 @@ siopao supports the following file methods:
 - [x] `File.Writer(overwrite)`: returns a [`Writer`](#write-streams) of the file, creates the file if needed.
 - [x] `File.WriterSize(overwrite, buffer_size)`: returns a [`Writer`](#write-streams) with a specified buffer size of the file, creates the file if needed.
 - [x] `File.Copy(dest)`: copies the file to the destination path.
-- [x] `File.CopyAndHash(dest)`: copies the file to the destination while creating a hash of the content.
+- [x] `File.CopyAndHash(kind, dest)`: copies the file to the destination while creating a hash of the content.
+- [x] `File.Checksum(kind)`: gets the checksum of the file, `kind` can be `sha512`, `sha256` or `md5`.
 - [x] `File.Move(dest)`: moves the file's path to the new path, can change folder and file name.
 - [x] `File.Rename(name)`: renames the file's name, works like `File.Move` but keeps the file in the same folder.
 - [x] `File.MoveTo(dir)`: moves the file to a new directory, the opposite  of `File.Rename`, keeps the file name and extension, but changes the folder.

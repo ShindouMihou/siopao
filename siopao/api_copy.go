@@ -1,8 +1,11 @@
 package siopao
 
 import (
+	"crypto/md5"
 	"crypto/sha256"
+	"crypto/sha512"
 	"encoding/hex"
+	"errors"
 	"io"
 )
 
@@ -22,7 +25,7 @@ func (file *File) Copy(dest string) error {
 }
 
 // CopyWithHash works similar to Copy but also creates a hash of the contents.
-func (file *File) CopyWithHash(dest string) (*string, error) {
+func (file *File) CopyWithHash(kind ChecksumKind, dest string) (*string, error) {
 	destination := Open(dest)
 	return write(destination, true, func() (*string, error) {
 		err := file.openRead()
@@ -30,12 +33,22 @@ func (file *File) CopyWithHash(dest string) (*string, error) {
 			return nil, err
 		}
 		defer file.close()
-		hash := sha256.New()
-		teeReader := io.TeeReader(file.file, hash)
+		hsh := sha256.New()
+		switch kind {
+		case Sha256Checksum:
+			hsh = sha256.New()
+		case Md5Checksum:
+			hsh = md5.New()
+		case Sha512Checksum:
+			hsh = sha512.New()
+		default:
+			return nil, errors.New("unsupported checksum kind")
+		}
+		teeReader := io.TeeReader(file.file, hsh)
 		if _, err = io.Copy(destination.file, teeReader); err != nil {
 			return nil, err
 		}
-		sum := hex.EncodeToString(hash.Sum(nil))
+		sum := hex.EncodeToString(hsh.Sum(nil))
 		return &sum, nil
 	})
 }
