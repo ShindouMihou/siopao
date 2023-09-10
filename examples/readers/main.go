@@ -6,10 +6,6 @@ import (
 	"log"
 )
 
-type Hello struct {
-	World string `json:"world"`
-}
-
 func main() {
 	file := siopao.Open("examples/readers/big_test.txt")
 	reader, err := file.TextReader()
