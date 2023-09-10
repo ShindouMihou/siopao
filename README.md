@@ -20,10 +20,16 @@ type Hello struct {
 }
 
 func main() {
+	// Opening a file interface, this does not open the file yet as the file is only opened 
+	// when needed to prevent unnecessary leaking of resources.
 	file := siopao.Open("test.json")
+	
+	//  Overwriting (or writing) content to file.
 	if err := file.Overwrite(Hello{World: "hello world"}); err != nil {
 		log.Fatalln(err)
 	}
+	
+	// Unmarshalling file to Json.
 	var hello Hello
 	if err := file.Json(&hello); err != nil {
 		log.Fatalln(err)
