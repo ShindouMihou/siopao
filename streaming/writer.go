@@ -3,6 +3,7 @@ package streaming
 import (
 	"bufio"
 	"github.com/ShindouMihou/siopao/paopao"
+	"io"
 	"os"
 )
 
@@ -34,7 +35,7 @@ func (writer *Writer) AlwaysAppendNewLine() *Writer {
 }
 
 // Write writes the content into the file, note that this does not append a new line for each write
-// unless the Writer uses AlwaysAppendNewLine. This marshals anything other than  string and byte array into the
+// unless the Writer uses AlwaysAppendNewLine. This marshals anything other than string, bufio.Reader and byte array into the
 // paopao.Marshal which is Json by default.
 func (writer *Writer) Write(t any) error {
 	switch t.(type) {
@@ -42,6 +43,13 @@ func (writer *Writer) Write(t any) error {
 		return writer.write([]byte(t.(string)))
 	case []byte:
 		return writer.write(t.([]byte))
+	case *bufio.Reader:
+		return writer.wrtbuffer(t.(*bufio.Reader))
+	case bufio.Reader:
+		buffer := t.(bufio.Reader)
+		return writer.wrtbuffer(&buffer)
+	case io.Reader:
+		return writer.wrtbuffer(t.(io.Reader))
 	default:
 		bytes, err := paopao.Marshal(t)
 		if err != nil {

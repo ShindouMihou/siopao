@@ -41,7 +41,7 @@ func main() {
 
 ## file io
 siopao supports the following file methods:
-- [x] `File.Write(any)`: writes to file, appends if it exists. anything other than string and byte array is translated to json.
+- [x] `File.Write(any)`: writes to file, appends if it exists. anything other than string, `io.Reader`, `bufio.Reader` and byte array is translated to json.
 - [x] `File.Overwrite(any)`: overwrites the file with the new contents, similar to the above and marshals anything else to json.
 - [x] `File.WriteMarshal(marshaler, any)`: writes  to file, appends if it exists. anything other than string and byte array is marshaled using the provided marshaller.
 - [x] `File.OverwriteMarshal(marshaler, any)`: overwrites the file with the new contents, similar to the above and marshals anything else to the provided marshaller.
@@ -107,7 +107,7 @@ siopao also has simplified streaming that helps with streamwriting.
 
 - `Writer`: the all-around streaming writer, defaults to json for anything other than bytes and string.
   - [x] `AlwaysAppendNewLine`: sets the writer to always append a new line on each new write.
-  - [x] `Write(any)`: similar to the [`File.Write`](#file-io) but pushes to the buffer, this marshals anything other than bytes and string to json.
+  - [x] `Write(any)`: similar to the [`File.Write`](#file-io) but pushes to the buffer, this marshals anything other than bytes, `io.Reader`, `bufio.Reader` and string to json.
   - [x] `WriteMarshal(any)`: similar to the [`File.WriteMarshal`](#file-io) but pushes to the buffer, this marshals anything other than bytes and string with the provided marshaller.
   - [x] `Flush`: flushes the buffer.
   - [x] `End`: flushes the buffer and closes the file. similar to bun's `FileSink.end`.

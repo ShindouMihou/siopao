@@ -1,14 +1,23 @@
 package siopao
 
 import (
+	"bufio"
 	"github.com/ShindouMihou/siopao/streaming"
 	"os"
+	"strings"
 	"testing"
 )
 
 func TestFile_Overwrite(t *testing.T) {
 	file := Open(".tests/write-01.txt")
 	if err := file.Overwrite("hello world"); err != nil {
+		t.Fatal("failed to write to test text file: ", err)
+	}
+}
+
+func TestFile_Overwrite3(t *testing.T) {
+	file := Open(".tests/write-01.txt")
+	if err := file.Overwrite(bufio.NewReader(strings.NewReader("hello world"))); err != nil {
 		t.Fatal("failed to write to test text file: ", err)
 	}
 }
