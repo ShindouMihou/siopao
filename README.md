@@ -54,6 +54,9 @@ siopao supports the following file methods:
 - [x] `File.Writer(overwrite)`: returns a [`Writer`](#write-streams) of the file, creates the file if needed.
 - [x] `File.WriterSize(overwrite, buffer_size)`: returns a [`Writer`](#write-streams) with a specified buffer size of the file, creates the file if needed.
 
+all the `File` methods except the ones that opens a stream will lazily open the file, which means that we open the file when needed and close it 
+immediately after being used, as such, it is recommended to use the streaming methods when needing to write multiple times to the file.
+
 
 ## read streams
 
