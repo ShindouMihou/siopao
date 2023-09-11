@@ -47,6 +47,49 @@ func TestFile_Checksum(t *testing.T) {
 	}
 }
 
+func TestFile_Copy(t *testing.T) {
+	file := Open(".tests/write-01.txt")
+	err := file.Copy(".tests/copy-01.txt")
+	if err != nil {
+		t.Fatal("failed to copy to test text file: ", err)
+	}
+}
+
+func TestFile_CopyWithHash(t *testing.T) {
+	file := Open(".tests/write-01.txt")
+	checksum, err := file.CopyWithHash(Md5Checksum, ".tests/copy-02.txt")
+	if err != nil {
+		t.Fatal("failed to copy to test text file: ", err)
+	}
+	t.Log("checksum of copy: ", checksum)
+}
+
+func TestFile_Rename(t *testing.T) {
+	file := Open(".tests/write-01.txt")
+	err := file.Copy(".tests/copy-03.txt")
+	if err != nil {
+		t.Fatal("failed to copy to test text file: ", err)
+	}
+	file = Open(".tests/copy-03.txt")
+	if err := file.Rename("rename-01.txt"); err != nil {
+		t.Fatal("failed to rename test text file: ", err)
+	}
+}
+
+func TestFile_MoveTo(t *testing.T) {
+	file := Open(".tests/rename-01.txt")
+	if err := file.MoveTo(".tests/renamed"); err != nil {
+		t.Fatal("failed to move to new directory: ", err)
+	}
+}
+
+func TestFile_Move(t *testing.T) {
+	file := Open(".tests/renamed/rename-01.txt")
+	if err := file.Move(".tests/renamed/rename-02.txt"); err != nil {
+		t.Fatal("failed to force move to new directory: ", err)
+	}
+}
+
 type Hello struct {
 	World string `json:"world"`
 }

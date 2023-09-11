@@ -9,6 +9,9 @@ import (
 // move the file to another folder. If you want to simply rename the file's name, use Rename instead, otherwise,
 // if you want to keep the name, but move the folder, use MoveTo instead.
 func (file *File) Move(dest string) error {
+	if err := mkparent(dest); err != nil {
+		return err
+	}
 	return os.Rename(file.path, dest)
 }
 
@@ -28,6 +31,10 @@ func (file *File) Rename(name string) error {
 // If you want to move the file into an entirely new folder, use Move instead.
 // You can also use Rename if you want to rename the file's name.
 func (file *File) MoveTo(dir string) error {
-	base := filepath.Base(dir)
-	return os.Rename(file.path, filepath.Join(dir, base))
+	base := filepath.Base(file.path)
+	dest := filepath.Join(dir, base)
+	if err := mkparent(dest); err != nil {
+		return err
+	}
+	return os.Rename(file.path, dest)
 }
