@@ -14,11 +14,5 @@ func write[T any](file *File, trunc bool, fn func() (*T, error)) (*T, error) {
 		return nil, err
 	}
 	defer file.close()
-
-	if trunc {
-		if err := file.clear(); err != nil {
-			return nil, err
-		}
-	}
 	return fn()
 }

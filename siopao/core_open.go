@@ -34,6 +34,12 @@ func (file *File) openWrite(trunc bool) error {
 	}
 
 	file.file = f
+
+	if trunc {
+		if err := file.clear(); err != nil {
+			return err
+		}
+	}
 	return nil
 }
 
