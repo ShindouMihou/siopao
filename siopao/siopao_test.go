@@ -2,9 +2,12 @@ package siopao
 
 import (
 	"bufio"
+	"fmt"
 	"github.com/ShindouMihou/siopao/streaming"
 	"os"
+	"strconv"
 	"strings"
+	"sync"
 	"testing"
 )
 
@@ -111,6 +114,46 @@ func TestFile_Json(t *testing.T) {
 	if hello.World != "hello world" {
 		t.Fatal("test file does not match expected result, got '", hello.World, "' instead of 'hello world'")
 	}
+}
+
+func TestConcurrency(t *testing.T) {
+	file := Open(".tests/concurrency-01.json")
+	wg := sync.WaitGroup{}
+	wg.Add(2)
+
+	written := make(chan int, 1)
+	go func() {
+		defer wg.Done()
+		i := 0
+		for i < 1000 {
+			i++
+			if err := file.Overwrite("hello " + strconv.Itoa(i)); err != nil {
+				t.Error(err)
+			}
+
+			written <- i
+		}
+	}()
+	go func() {
+		defer wg.Done()
+		for {
+			i := <-written
+			if i == 1000 {
+				fmt.Println("written ", i)
+				text, err := file.Text()
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				fmt.Println("concurrency: ", text)
+			}
+			if i == 1000 {
+				close(written)
+				break
+			}
+		}
+	}()
+	wg.Wait()
 }
 
 func BenchmarkFile_Write(b *testing.B) {

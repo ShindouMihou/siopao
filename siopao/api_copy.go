@@ -7,18 +7,19 @@ import (
 	"encoding/hex"
 	"errors"
 	"io"
+	"os"
 )
 
 // Copy copies the contents of the given source (file) into the destination.
 func (file *File) Copy(dest string) error {
 	destination := Open(dest)
-	_, err := write(destination, true, func() (*any, error) {
-		err := file.openRead()
+	_, err := write(destination, true, func(destFile *os.File) (*any, error) {
+		srcFile, err := file.openRead()
 		if err != nil {
 			return nil, err
 		}
-		defer file.close()
-		_, err = io.Copy(destination.file, file.file)
+		defer file.close(srcFile)
+		_, err = io.Copy(destFile, srcFile)
 		return nil, err
 	})
 	return err
@@ -27,12 +28,12 @@ func (file *File) Copy(dest string) error {
 // CopyWithHash works similar to Copy but also creates a hash of the contents.
 func (file *File) CopyWithHash(kind ChecksumKind, dest string) (*string, error) {
 	destination := Open(dest)
-	return write(destination, true, func() (*string, error) {
-		err := file.openRead()
+	return write(destination, true, func(destFile *os.File) (*string, error) {
+		srcFile, err := file.openRead()
 		if err != nil {
 			return nil, err
 		}
-		defer file.close()
+		defer file.close(srcFile)
 		hsh := sha256.New()
 		switch kind {
 		case Sha256Checksum:
@@ -44,8 +45,8 @@ func (file *File) CopyWithHash(kind ChecksumKind, dest string) (*string, error) 
 		default:
 			return nil, errors.New("unsupported checksum kind")
 		}
-		teeReader := io.TeeReader(file.file, hsh)
-		if _, err = io.Copy(destination.file, teeReader); err != nil {
+		teeReader := io.TeeReader(srcFile, hsh)
+		if _, err = io.Copy(destFile, teeReader); err != nil {
 			return nil, err
 		}
 		sum := hex.EncodeToString(hsh.Sum(nil))

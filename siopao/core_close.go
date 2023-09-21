@@ -1,6 +1,8 @@
 package siopao
 
-func (file *File) close() {
+import "os"
+
+func (file *File) close(f *os.File) {
 	// ignore the error, it's likely that it just already called
-	_ = file.file.Close()
+	_ = f.Close()
 }

@@ -20,11 +20,11 @@ const (
 
 // Checksum gets the checksum hash of the file's contents.
 func (file *File) Checksum(kind ChecksumKind) (string, error) {
-	err := file.openRead()
+	f, err := file.openRead()
 	if err != nil {
 		return "", err
 	}
-	defer file.close()
+	defer file.close(f)
 
 	var hsh hash.Hash
 	switch kind {
@@ -37,7 +37,7 @@ func (file *File) Checksum(kind ChecksumKind) (string, error) {
 	default:
 		return "", errors.New("unsupported checksum kind")
 	}
-	if _, err := io.Copy(hsh, file.file); err != nil {
+	if _, err := io.Copy(hsh, f); err != nil {
 		return "", err
 	}
 	return hex.EncodeToString(hsh.Sum(nil)), nil

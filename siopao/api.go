@@ -1,12 +1,7 @@
 package siopao
 
-import (
-	"os"
-)
-
 type File struct {
 	path string
-	file *os.File
 }
 
 // Open opens up a new interface with the given file.
@@ -17,6 +12,5 @@ type File struct {
 func Open(path string) *File {
 	return &File{
 		path: path,
-		file: nil,
 	}
 }

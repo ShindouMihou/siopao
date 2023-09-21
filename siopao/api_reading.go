@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/ShindouMihou/siopao/paopao"
 	"io"
+	"os"
 	"reflect"
 )
 
@@ -20,8 +21,8 @@ func (file *File) Text() (string, error) {
 // Bytes reads the file directly as a byte array, this is not recommend to use when handling big
 // files, we recommend using Reader to stream big files instead.
 func (file *File) Bytes() ([]byte, error) {
-	bytes, err := read(file, func() (*[]byte, error) {
-		bytes, err := io.ReadAll(file.file)
+	bytes, err := read(file, func(f *os.File) (*[]byte, error) {
+		bytes, err := io.ReadAll(f)
 		if err != nil {
 			return nil, nil
 		}
@@ -39,8 +40,8 @@ func (file *File) Unmarshal(unmarshal paopao.Unmarshaler, t interface{}) error {
 		return errors.New("non-pointer kind for value")
 	}
 
-	if _, err := read[any](file, func() (*any, error) {
-		bytes, err := io.ReadAll(file.file)
+	if _, err := read[any](file, func(f *os.File) (*any, error) {
+		bytes, err := io.ReadAll(f)
 		if err != nil {
 			return nil, err
 		}

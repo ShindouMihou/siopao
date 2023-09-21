@@ -6,18 +6,17 @@ import (
 	"strings"
 )
 
-func (file *File) openRead() error {
+func (file *File) openRead() (*os.File, error) {
 	f, err := os.Open(file.path)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	file.file = f
-	return nil
+	return f, nil
 }
 
-func (file *File) openWrite(trunc bool) error {
+func (file *File) openWrite(trunc bool) (*os.File, error) {
 	if err := file.mkparent(); err != nil {
-		return err
+		return nil, err
 	}
 
 	var f *os.File
@@ -30,24 +29,22 @@ func (file *File) openWrite(trunc bool) error {
 	}
 
 	if err != nil {
-		return err
+		return nil, err
 	}
-
-	file.file = f
 
 	if trunc {
-		if err := file.clear(); err != nil {
-			return err
+		if err := file.clear(f); err != nil {
+			return nil, err
 		}
 	}
-	return nil
+	return f, nil
 }
 
-func (file *File) clear() error {
-	if err := file.file.Truncate(0); err != nil {
+func (file *File) clear(f *os.File) error {
+	if err := f.Truncate(0); err != nil {
 		return err
 	}
-	if _, err := file.file.Seek(0, 0); err != nil {
+	if _, err := f.Seek(0, 0); err != nil {
 		return err
 	}
 	return nil

@@ -7,11 +7,11 @@ import "github.com/ShindouMihou/siopao/streaming"
 // This causes the file to be opened, therefore, we recommend using the returned streaming.Reader immediately
 // to prevent unnecessary leaking of resources.
 func (file *File) Reader() (*streaming.Reader, error) {
-	err := file.openRead()
+	f, err := file.openRead()
 	if err != nil {
 		return nil, err
 	}
-	return streaming.NewReader(file.file), nil
+	return streaming.NewReader(f), nil
 }
 
 // TextReader opens a string stream to the file, this is an abstraction over the streaming.Reader to handle
@@ -33,11 +33,11 @@ func (file *File) TextReader() (*streaming.TextReader, error) {
 // This causes the file to be opened, it is up to you to close the streaming.Writer using the methods provided.
 // We recommend using streaming.Writer's End method to close the writer as it flushes and closes the file.
 func (file *File) WriterSize(overwrite bool, size int) (*streaming.Writer, error) {
-	err := file.openWrite(overwrite)
+	f, err := file.openWrite(overwrite)
 	if err != nil {
 		return nil, err
 	}
-	return streaming.NewWriterSize(file.file, size), nil
+	return streaming.NewWriterSize(f, size), nil
 }
 
 // Writer opens a write stream, allowing easier stream writing to the file. Unlike WriterSize, this opens a writing stream
@@ -46,9 +46,9 @@ func (file *File) WriterSize(overwrite bool, size int) (*streaming.Writer, error
 // This causes the file to be opened, it is up to you to close the streaming.Writer using the methods provided.
 // We recommend using streaming.Writer's End method to close the writer as it flushes and closes the file.
 func (file *File) Writer(overwrite bool) (*streaming.Writer, error) {
-	err := file.openWrite(overwrite)
+	f, err := file.openWrite(overwrite)
 	if err != nil {
 		return nil, err
 	}
-	return streaming.NewWriter(file.file), nil
+	return streaming.NewWriter(f), nil
 }

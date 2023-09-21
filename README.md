@@ -130,3 +130,10 @@ marshallers such as [`sonic`](https://github.com/bytedance/sonic). you can chang
 paopao.Marshal = sonic.Marshal
 paopao.Unmarshal = sonic.Unmarshal
 ```
+
+## concurrency
+
+siopao prior to v1.0.4 was written without concurrency in mind. the `File` instance carried a pointer to a `*os.File` and 
+that was being shared by all operations performed by the `File` instance. that's unsafe. i know. and since v1.0.4, the internal 
+code has been restructured to open a `*os.File` internally, preventing any sharing of the `*os.File` instance, making `File` 
+concurrent-safe from v1.0.4 onwards.
