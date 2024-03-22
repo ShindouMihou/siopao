@@ -116,6 +116,17 @@ func TestFile_Json(t *testing.T) {
 	}
 }
 
+func TestFile_Recurse(t *testing.T) {
+	file := Open("../examples")
+
+	err := file.Recurse(true, func(file *File) {
+		t.Log("Found file: ", file.Path(), " {is_dir: ", file.isDir, "}")
+	})
+	if err != nil {
+		t.Fatal("failed to read to recurse examples folder: ", err)
+	}
+}
+
 func TestConcurrency(t *testing.T) {
 	file := Open(".tests/concurrency-01.json")
 	wg := sync.WaitGroup{}

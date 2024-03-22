@@ -1,7 +1,8 @@
 package siopao
 
 type File struct {
-	path string
+	path  string
+	isDir int
 }
 
 // Open opens up a new interface with the given file.
@@ -11,6 +12,12 @@ type File struct {
 // leaked.
 func Open(path string) *File {
 	return &File{
-		path: path,
+		path:  path,
+		isDir: -1,
 	}
+}
+
+// Path gets the path of the file.
+func (file *File) Path() string {
+	return file.path
 }
