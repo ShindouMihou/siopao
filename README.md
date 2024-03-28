@@ -68,6 +68,10 @@ siopao supports the following file methods:
 - [x] `File.MoveTo(dir)`: moves the file to a new directory, the opposite  of `File.Rename`, keeps the file name and extension, but changes the folder.
 - [x] `File.DeleteRecursively`: deletes the file or folder. if it's a folder and has contents, deletes the contents recursively.
 - [x] `File.Delete`: deletes the file or empty folder. if it's a folder and has contents, errors out.
+- [x] `File.MkdirParent`: makes all the directory of the path, includes the path itself if it is a directory.
+- [x] `File.IsDir`: checks whether the path is a directory, this is cached.
+- [x] `File.UncachedIsDir`: checks whether the path is a directory, this is uncached and results in a system call all the time.
+- [x] `File.Recurse`: recursively looks into the items inside the directory, can also go down levels deep when `nested` is `true`.
 
 all the `File` methods except the ones that opens a stream will lazily open the file, which means that we open the file when needed and close it 
 immediately after being used, as such, it is recommended to use the streaming methods when needing to write multiple times to the file.
@@ -94,6 +98,7 @@ the base streaming reader that handles with bytes.
 - [x] `Lines`: reads each line and creates an array of `[]bytes`. this also caches the array into the reader, you can empty it using `empty`
 - [x] `Count`: counts all the lines in the file, this calls `Lines` and counts the cache if there is one already.
 - [x] `EachLine`: reads each line and performs an action upon that line, **the line's byte array will be overridden on each next line**
+- [x] `EachChar`: reads each char and preforms an action upon that char.
 - [x] `EachImmutableLine`: reads each line and performs an action upon that line, slower than the prior method, but the line's value is never overridden on each next line.
 - [x] `Empty`: dereferences the cache if there is any.
 
@@ -101,6 +106,7 @@ the base streaming reader that handles with bytes.
 a simple streaming reader that handles with strings. it wraps around [`reader`](#reader).
 - [x] `Lines`: reads each line and creates an array of string. this also caches the array into the reader, you can empty it using `empty`
 - [x] `Count`: counts all the lines in the file, this calls `Lines` and counts the cache if there is one already.
+- [x] `EachChar`: reads each char and preforms an action upon that char.
 - [x] `EachLine`: reads each line and performs an action upon that line.
 - [x] `Empty`: dereferences the cache if there is any.
 
@@ -137,3 +143,8 @@ siopao prior to v1.0.4 was written without concurrency in mind. the `File` insta
 that was being shared by all operations performed by the `File` instance. that's unsafe. i know. and since v1.0.4, the internal 
 code has been restructured to open a `*os.File` internally, preventing any sharing of the `*os.File` instance, making `File` 
 concurrent-safe from v1.0.4 onwards.
+
+## license
+
+siopao is licensed under the MIT license. you are free to redistribute, use and do other related actions under the MIT 
+license. this is permanent and irrevocable.
