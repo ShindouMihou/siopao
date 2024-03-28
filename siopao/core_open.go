@@ -50,12 +50,6 @@ func (file *File) clear(f *os.File) error {
 	return nil
 }
 
-// MkdirParent creates the parent folders of the path, this also includes the current
-// path if it is a directory already.
-func (file *File) MkdirParent() error {
-	return mkparent(file.path)
-}
-
 func mkparent(path string) error {
 	if strings.Contains(path, "\\") || strings.Contains(path, "/") {
 		if err := os.MkdirAll(filepath.Dir(path), os.ModePerm); err != nil {

@@ -51,6 +51,12 @@ func (file *File) Recurse(nested bool, fn func(file *File)) error {
 	return file.recurse(nested, fn)
 }
 
+// MkdirParent creates the parent folders of the path, this also includes the current
+// path if it is a directory already.
+func (file *File) MkdirParent() error {
+	return mkparent(file.path)
+}
+
 func (file *File) recurse(nested bool, fn func(file *File)) error {
 	files, err := os.ReadDir(file.path)
 	if err != nil {
