@@ -37,6 +37,50 @@ func TestFile_Text(t *testing.T) {
 	}
 }
 
+func TestFile_Reader(t *testing.T) {
+	file := Open(".tests/reader-01.txt")
+	writer, err := file.Writer(true)
+	if err != nil {
+		t.Fatal("failed to clean up test file.")
+	}
+	for i := 0; i < 50; i++ {
+		if err := writer.Write("hello world\n"); err != nil {
+			t.Fatal("failed to write to test text file: ", err)
+		}
+	}
+	if err := writer.End(); err != nil {
+		t.Fatal("failed to close writer")
+	}
+	reader, err := file.Reader()
+	if err != nil {
+		t.Fatal("failed to open reader")
+	}
+	if err := reader.EachLine(func(line []byte) {
+		if len(line) != len([]byte("hello world")) {
+			t.Fatal("invalid size: ", len(line), line)
+		}
+	}); err != nil {
+		t.Fatal("failed to read test file: ", err)
+	}
+
+	// each char test
+	reader, err = file.Reader()
+	if err != nil {
+		t.Fatal("failed to open reader")
+	}
+	if err := reader.EachChar(func(char rune) {
+		if char != 'h' && char != 'e' && char != 'l' && char != 'o' && char != 'w' && char != 'r' && char != 'd' && char != '\n' && char != 32 {
+			t.Fatal("invalid char read: ", string(char))
+		}
+	}); err != nil {
+		t.Fatal("failed to read test file: ", err)
+	}
+
+	if err := os.Remove(".tests/reader-01.txt"); err != nil {
+		t.Fatal("failed to clean up test file.")
+	}
+}
+
 func TestFile_Checksum(t *testing.T) {
 	file := Open(".tests/write-01.txt")
 

@@ -2,6 +2,7 @@ package streaming
 
 import (
 	"bufio"
+	"io"
 	"os"
 )
 
@@ -16,12 +17,19 @@ func NewReader(file *os.File) *Reader {
 }
 
 type LineReader func(line []byte)
+type CharReader func(char rune)
 
 // EachLine reads each line of the file as bytes. Unlike EachImmutableLine, the byte array is reused which means
 // it will be overridden each next line, therefore, it is not recommended to store the byte array elsewhere without
 // copying.
 func (reader *Reader) EachLine(fn LineReader) error {
 	return reader.eachline(false, fn)
+}
+
+// EachChar reads each char of the file. Unlike EachLine, this will do a char-by-char process, which means everything
+// including next line characters will be included.
+func (reader *Reader) EachChar(fn CharReader) error {
+	return reader.eachchar(fn)
 }
 
 // EachImmutableLine reads each line of the file as bytes. Unlike EachLine, there is copying involved which makes this
@@ -97,6 +105,24 @@ func (reader *Reader) eachline(immutable bool, fn LineReader) error {
 	}
 	if err := scanner.Err(); err != nil {
 		return err
+	}
+	return nil
+}
+
+func (reader *Reader) eachchar(fn CharReader) error {
+	defer reader.Close()
+
+	rd := bufio.NewReader(reader.file)
+	for {
+		if c, _, err := rd.ReadRune(); err != nil {
+			if err == io.EOF {
+				break
+			} else {
+				return err
+			}
+		} else {
+			fn(c)
+		}
 	}
 	return nil
 }

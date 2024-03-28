@@ -58,3 +58,8 @@ func (reader *TextReader) EachLine(fn TextLineReader) error {
 		fn(string(line))
 	})
 }
+
+// EachChar reads each char of the file.
+func (reader *TextReader) EachChar(fn CharReader) error {
+	return reader.reader.eachchar(fn)
+}
