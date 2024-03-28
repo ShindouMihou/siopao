@@ -15,7 +15,7 @@ func (file *File) openRead() (*os.File, error) {
 }
 
 func (file *File) openWrite(trunc bool) (*os.File, error) {
-	if err := file.mkparent(); err != nil {
+	if err := file.MkdirParent(); err != nil {
 		return nil, err
 	}
 
@@ -50,8 +50,9 @@ func (file *File) clear(f *os.File) error {
 	return nil
 }
 
-// MkdirParent creates the parent folders of the path.
-func (file *File) mkparent() error {
+// MkdirParent creates the parent folders of the path, this also includes the current
+// path if it is a directory already.
+func (file *File) MkdirParent() error {
 	return mkparent(file.path)
 }
 
